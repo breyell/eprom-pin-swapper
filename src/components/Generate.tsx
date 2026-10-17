@@ -24,8 +24,7 @@ function swaps(mapping: Mapping) {
 function outputName(name: string, direction: Direction) {
   const dot = name.lastIndexOf('.');
   const base = dot > 0 ? name.slice(0, dot) : name;
-  const ext = dot > 0 ? name.slice(dot) : '.bin';
-  return `${base}.${direction === 'scramble' ? 'swapped' : 'unswapped'}${ext}`;
+  return `${base}-${direction === 'scramble' ? 'swapped' : 'unswapped'}.bin`;
 }
 
 export default function Generate({ file, chip, mapping, direction, byteOrder, fits }: Props) {
