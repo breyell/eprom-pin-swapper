@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import App from '../components/App';
+import ThemeToggle from '../components/ThemeToggle';
+---
+
+<Base title="EPROM Pin Swap">
+  <header class="border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80">
+    <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
+      <div>
+        <h1 class="text-xl font-bold tracking-tight">EPROM Pin Swap</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Remap ROM images for pinswapped boards. Your file is processed on your device and never uploaded.</p>
+      </div>
+      <ThemeToggle client:load />
+    </div>
+  </header>
+  <main class="mx-auto max-w-5xl space-y-6 px-4 py-6">
+    <App client:load />
+  </main>
+  <footer class="mx-auto max-w-5xl px-4 pb-8 text-xs text-slate-500 dark:text-slate-400">
+    Check pinouts against your chip's datasheet before burning.
+  </footer>
+</Base>
