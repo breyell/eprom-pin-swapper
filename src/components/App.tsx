@@ -108,8 +108,9 @@ export default function App() {
     </div>
   );
 
+  // The island is the only child of <main>, so the sections need their own spacing.
   return (
-    <>
+    <div class="space-y-6">
       <Upload file={file} onLoad={loadFile} onClear={() => setFile(null)} notice={notice} />
       <ChipDiagram chip={chip} mapping={mapping} selected={selected} onPinClick={clickPin} />
       <RemapPanel
@@ -127,6 +128,6 @@ export default function App() {
         onByteOrderChange={setByteOrder}
       />
       <Generate file={file} chip={chip} mapping={mapping} direction={direction} byteOrder={byteOrder} fits={fits} />
-    </>
+    </div>
   );
 }

@@ -24,7 +24,7 @@ A mapping is made of two permutations:
 
 **Scramble** turns a normal dump into the image to burn for the swapped board. **Descramble** reverses it, turning an image read from a swapped board back into a normal dump. Only address↔address and data↔data swaps are allowed. Power and control pins can't be compensated for in software.
 
-16-bit parts (27C400/800/160) are handled in word mode, with a selectable byte order. A file smaller than the chip is padded with `0xFF`.
+16-bit parts (27C400/800/160/322) are handled in word mode, with a selectable byte order. The 32 Mbit 27C322 is word-only: pin 32 is A20 and VPP shares the OE pin. A file smaller than the chip is padded with `0xFF`.
 
 ## Adding a preset pinswap
 

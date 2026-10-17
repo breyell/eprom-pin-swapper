@@ -81,20 +81,21 @@ const dip32 = (p1: string, p24: string, p30: string, p31: string) => [
 ];
 
 // 16-bit parts in word mode (BYTE high); Q15 doubles as A-1 in byte mode.
-const wordData = [
+// Word-only parts (27C322) have no BYTE pin, so it becomes an address line.
+const wordData = (q15: string, byte: string) => [
   'Q0', 'Q8', 'Q1', 'Q9', 'Q2', 'Q10', 'Q3', 'Q11', 'VCC',
-  'Q4', 'Q12', 'Q5', 'Q13', 'Q6', 'Q14', 'Q7', 'Q15/A-1', 'GND', 'BYTE/VPP',
+  'Q4', 'Q12', 'Q5', 'Q13', 'Q6', 'Q14', 'Q7', q15, 'GND', byte,
 ];
 
 const dip40 = [
   'A17', 'A7', 'A6', 'A5', 'A4', 'A3', 'A2', 'A1', 'A0', 'CE', 'GND', 'OE',
-  ...wordData,
+  ...wordData('Q15/A-1', 'BYTE/VPP'),
   'A16', 'A15', 'A14', 'A13', 'A12', 'A11', 'A10', 'A9', 'A8',
 ];
 
-const dip42 = (p42: string) => [
-  'A18', 'A17', 'A7', 'A6', 'A5', 'A4', 'A3', 'A2', 'A1', 'A0', 'CE', 'GND', 'OE',
-  ...wordData,
+const dip42 = (p13: string, p30: string, p32: string, p42: string) => [
+  'A18', 'A17', 'A7', 'A6', 'A5', 'A4', 'A3', 'A2', 'A1', 'A0', 'CE', 'GND', p13,
+  ...wordData(p30, p32),
   'A16', 'A15', 'A14', 'A13', 'A12', 'A11', 'A10', 'A9', 'A8', p42,
 ];
 
@@ -110,8 +111,9 @@ export const eproms: Eprom[] = [
   chip('27c040', '27C040 (512 KB)', 'DIP-32', 8, dip32('VPP', 'OE', 'A17', 'A18')),
   chip('27c080', '27C080 (1 MB)', 'DIP-32', 8, dip32('A19', 'OE/VPP', 'A17', 'A18')),
   chip('27c400', '27C400 (512 KB, 16-bit)', 'DIP-40', 16, dip40),
-  chip('27c800', '27C800 (1 MB, 16-bit)', 'DIP-42', 16, dip42('NC')),
-  chip('27c160', '27C160 (2 MB, 16-bit)', 'DIP-42', 16, dip42('A19')),
+  chip('27c800', '27C800 (1 MB, 16-bit)', 'DIP-42', 16, dip42('OE', 'Q15/A-1', 'BYTE/VPP', 'NC')),
+  chip('27c160', '27C160 (2 MB, 16-bit)', 'DIP-42', 16, dip42('OE', 'Q15/A-1', 'BYTE/VPP', 'A19')),
+  chip('27c322', '27C322 (4 MB, 16-bit)', 'DIP-42', 16, dip42('OE/VPP', 'Q15', 'A20', 'A19')),
 ];
 
 export const packages: Package[] = ['DIP-24', 'DIP-28', 'DIP-32', 'DIP-40', 'DIP-42'];

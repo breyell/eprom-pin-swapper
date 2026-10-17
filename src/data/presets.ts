@@ -37,6 +37,7 @@ export const presets: Record<string, Preset[]> = {
   '27c400': [],
   '27c800': [],
   '27c160': [],
+  '27c322': [],
 };
 
 export function getPresets(epromId: string): Preset[] {
