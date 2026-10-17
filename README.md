@@ -42,7 +42,7 @@ Presets live in [`src/data/presets.ts`](src/data/presets.ts), keyed by EPROM id:
 ],
 ```
 
-Each array must be a full permutation (`address` has the chip's `addressBits` entries, and `data` has 8 or 16). `pnpm test` checks every preset against its chip.
+Each array must be a full permutation (`address` has the chip's `addressBits` entries, and `data` has 8 or 16). `pnpm test` checks every preset against its chip. The optional `description` can include `[text](url)` links.
 
 ## Adding an EPROM
 

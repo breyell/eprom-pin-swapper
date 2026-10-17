@@ -47,6 +47,25 @@ function Segmented<T extends string>({ value, options, onChange, label }: {
   );
 }
 
+const LINK = /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g;
+
+/** Plain text with Markdown-style [text](url) links. Only http(s) URLs are linked. */
+function LinkedText({ text }: { text: string }) {
+  const parts = [];
+  let last = 0;
+  for (const m of text.matchAll(LINK)) {
+    parts.push(text.slice(last, m.index));
+    parts.push(
+      <a key={m.index} href={m[2]} target="_blank" rel="noopener noreferrer" class="text-sky-600 underline hover:text-sky-700 dark:text-sky-400">
+        {m[1]}
+      </a>,
+    );
+    last = m.index + m[0].length;
+  }
+  parts.push(text.slice(last));
+  return <>{parts}</>;
+}
+
 function MapTable({ title, type, chip, perm, onAssign }: {
   title: string;
   type: PinRef['type'];
@@ -151,7 +170,9 @@ export default function RemapPanel(props: Props) {
             ))}
           </select>
           <span class="mt-1 block text-xs text-slate-500 dark:text-slate-400">
-            {props.presets.find((p) => p.id === props.presetId)?.description ?? 'Choose a known board layout, or set the mapping below.'}
+            <LinkedText
+              text={props.presets.find((p) => p.id === props.presetId)?.description ?? 'Choose a known board layout, or set the mapping below.'}
+            />
           </span>
         </label>
       </div>
