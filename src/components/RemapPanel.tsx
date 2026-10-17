@@ -1,3 +1,4 @@
+import { useState } from 'preact/hooks';
 import { eproms, packages, type Eprom } from '../data/eproms';
 import type { Preset } from '../data/presets';
 import type { ByteOrder, Direction, Mapping } from '../lib/remap';
@@ -13,6 +14,7 @@ interface Props {
   mapping: Mapping;
   onAssign: (type: PinRef['type'], chipBit: number, boardBit: number) => void;
   onReset: () => void;
+  onCopyLink: () => Promise<void>;
   direction: Direction;
   onDirectionChange: (d: Direction) => void;
   byteOrder: ByteOrder;
@@ -97,6 +99,14 @@ function MapTable({ title, type, chip, perm, onAssign }: {
 
 export default function RemapPanel(props: Props) {
   const { chip, mapping } = props;
+  const [copied, setCopied] = useState(false);
+
+  function copyLink() {
+    props.onCopyLink().then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }
 
   return (
     <section class={card}>
@@ -173,9 +183,19 @@ export default function RemapPanel(props: Props) {
             />
           </div>
         )}
-        <button type="button" class={`${button} ml-auto`} onClick={props.onReset}>
-          Reset mapping
-        </button>
+        <div class="ml-auto flex gap-2">
+          <button
+            type="button"
+            class={button}
+            onClick={copyLink}
+            title={props.presetId ? 'Link to this EPROM and preset' : 'Link to this EPROM'}
+          >
+            {copied ? 'Link copied' : 'Copy link'}
+          </button>
+          <button type="button" class={button} onClick={props.onReset}>
+            Reset mapping
+          </button>
+        </div>
       </div>
       <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">
         {props.direction === 'scramble'

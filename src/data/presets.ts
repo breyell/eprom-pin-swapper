@@ -37,7 +37,15 @@ export const presets: Record<string, Preset[]> = {
   '27c400': [],
   '27c800': [],
   '27c160': [],
-  '27c322': [],
+  '27c322': [
+    {
+      id: 'bucket-mouse-sa1-v1',
+      name: 'Bucket Mouse SA-1 v1.0',
+      description: 'A17/A18 swapped, data lines reversed (Q0→D15 … Q15→D0)',
+      address: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 17, 19, 20],
+      data: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+    },
+  ],
 };
 
 export function getPresets(epromId: string): Preset[] {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { eproms, getEprom } from '../data/eproms';
 import { getPresets } from '../data/presets';
 import { identity, isIdentity, type ByteOrder, type Direction, type Mapping } from '../lib/remap';
@@ -13,6 +13,13 @@ const DEFAULT_CHIP = '27256';
 function identityMapping(id: string): Mapping {
   const chip = getEprom(id);
   return { addr: identity(chip.addressBits), data: identity(chip.dataBits) };
+}
+
+/** Link to a chip, plus its preset when the mapping matches one. */
+function shareUrl(chipId: string, presetId: string): string {
+  const url = new URL(location.href);
+  url.search = new URLSearchParams(presetId ? { chip: chipId, preset: presetId } : { chip: chipId }).toString();
+  return url.toString();
 }
 
 const samePerm = (a: number[], b: number[]) => a.length === b.length && a.every((v, i) => v === b[i]);
@@ -31,6 +38,24 @@ export default function App() {
     () => presets.find((p) => samePerm(p.address, mapping.addr) && samePerm(p.data, mapping.data))?.id ?? '',
     [presets, mapping],
   );
+
+  // Deep links: ?chip=<id>&preset=<id>. Read after hydration since the page is prerendered.
+  const ready = useRef(false);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const linked = eproms.find((e) => e.id === params.get('chip'));
+    if (linked) {
+      const preset = getPresets(linked.id).find((p) => p.id === params.get('preset'));
+      setChipId(linked.id);
+      setMapping(preset ? { addr: [...preset.address], data: [...preset.data] } : identityMapping(linked.id));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Skip the first render so the default chip never overwrites an incoming link.
+    if (!ready.current) return void (ready.current = true);
+    history.replaceState(null, '', shareUrl(chipId, presetId));
+  }, [chipId, presetId]);
 
   function changeChip(id: string) {
     setChipId(id);
@@ -122,6 +147,7 @@ export default function App() {
         mapping={mapping}
         onAssign={assign}
         onReset={() => applyPreset('')}
+        onCopyLink={() => navigator.clipboard.writeText(shareUrl(chipId, presetId))}
         direction={direction}
         onDirectionChange={setDirection}
         byteOrder={byteOrder}
